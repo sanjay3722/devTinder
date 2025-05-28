@@ -1,39 +1,33 @@
 const express = require('express');
-
+const connectDB = require('./config/database');
 const app = express();
+const User = require('./models/user');
 
+app.post('/signup', async (req, res) => {
+    const user = new User({
+        firstName: 'Sanjay',
+        lastName: 'Kumar',
+        emailId: 'kumarsanjay3722@gmail.com',
+        password: 'sanjay@123',
+        gender: 'male'
+    })
 
-app.get('/user', (req, res) => {
-    res.send({name: 'sanjay', mobile: '8527020679'})
+    try{
+        await user.save();
+        res.send('User added successfuly!')
+    } catch(err){
+        res.status(400).send('Error saving user: ', err.message)
+    }
 })
 
-app.post('/user', (req, res) => {
-    res.send("This is the post call")
+
+connectDB().then(() => {
+    console.log("Database connection estabilshed!");
+
+    app.listen(7777, () => {
+        console.log('Server is started!')
+    });
+}).catch((err) => {
+    console.log("Database is not connected!")
 })
-
-app.delete('/user', (req, res) => {
-    res.send("This is the delete call")
-})
-
-app.patch('/user', (req, res) => {
-    res.send("This is the patch call")
-})
-
-app.put('/user', (req, res) => {
-    res.send("This is the put call")
-})
-
-// app.use('/test', (req, res) => {
-//     res.send('Test from the server!')
-// })
-// app.use('/hello', (req, res) => {
-//     res.send('Hello from the server!')
-// })
-
-// app.use('/', (req, res) => {
-//     console.log("Hello Sanjay")
-// })
-
-app.listen(7777, () => {
-    console.log('Server is started!')
-});
+  
