@@ -3,14 +3,10 @@ const connectDB = require('./config/database');
 const app = express();
 const User = require('./models/user');
 
+app.use(express.json());
+
 app.post('/signup', async (req, res) => {
-    const user = new User({
-        firstName: 'Sanjay',
-        lastName: 'Kumar',
-        emailId: 'kumarsanjay3722@gmail.com',
-        password: 'sanjay@123',
-        gender: 'male'
-    })
+    const user = new User(req.body)
 
     try{
         await user.save();
@@ -20,6 +16,40 @@ app.post('/signup', async (req, res) => {
     }
 })
 
+// User API - GET /user get all the users from the database
+app.get('/user', async (req, res) => {
+    try{
+        const users =  await User.find({emailId: req.body.emailId})
+        if(users.length !== 0){
+            res.send(users)
+        }else{
+            res.status(400).send('User not found');
+        }
+        res.send(users)
+    }catch{
+        res.status(400).send('Something went wrong')
+    }
+})
+
+app.delete('/user', async (req, res) => {
+    try{
+        const users =  await User.findByIdAndDelete(req.body.userId)
+         
+        res.send('User deleted successfuly!')
+    }catch{
+        res.status(400).send('Something went wrong')
+    }
+})
+
+// Feed API - GET /feed get all the users from the database
+app.get('/feed', async (req, res) => {
+    try{
+        const users =  await User.find({})
+        res.send(users)
+    }catch{
+        res.status(400).send('Something went wrong')
+    }
+})
 
 connectDB().then(() => {
     console.log("Database connection estabilshed!");
