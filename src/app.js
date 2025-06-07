@@ -5,8 +5,11 @@ const app = express();
 const User = require("./models/user");
 const {validateSignupData} = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookiesParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+app.use(cookiesParser());
 
 // Sign up api
 app.post("/signup", async (req, res) => {
@@ -53,6 +56,13 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     res.status(400).send("Error saving user: " + err.message);
   }
+});
+
+// User Profile
+app.get("/profile", async (req, res) => {
+  const cookies = req.cookies;
+  console.log(cookies);
+  res.send("User Profile");
 });
 
 // User API - GET /user get all the users from the database
